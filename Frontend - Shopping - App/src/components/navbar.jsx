@@ -28,20 +28,20 @@ const Navbar = () => {
     },[]);
 
     return (
-        <div className="flex items-center justify-between p-4 bg-zinc-900 shadow-xl font-sans text-white rounded-none w-full">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-zinc-900 shadow-xl font-sans text-white rounded-none w-full">
             {/* My Shopping App Logo */}
             <div className="flex-shrink-0">
-                <a href="/" className="text-2xl font-extrabold bg-gradient-to-r from-blue-400 to-indigo-600 bg-clip-text text-transparent">
+                <a href="/" className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-blue-400 to-indigo-600 bg-clip-text text-transparent">
                     My Shopping App
                 </a>
             </div>
 
             {/* Search Input and Button */}
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-0 flex-1 max-w-full sm:max-w-none">
                 <input
                     type="text"
                     placeholder="Search..."
-                    className="p-2 pl-4 w-64 rounded-l-full bg-zinc-800 border-2 border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 placeholder:text-zinc-400"
+                    className="p-2 pl-4 w-full sm:w-48 md:w-64 rounded-l-full bg-zinc-800 border-2 border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 placeholder:text-zinc-400"
                     value={searchText} onChange={(e)=>{setSearchText(e.target.value)}}
                 />
                 <button className="p-2 px-4 rounded-r-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors duration-300 cursor-pointer"
@@ -51,7 +51,7 @@ const Navbar = () => {
             </div>
             
             {/* Navigation Links, including the new menu icon */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 sm:gap-6">
                 <Link
                     to="/"
                     className="text-zinc-300 font-medium hover:text-white hover:bg-zinc-800 px-3 py-2 rounded-lg transition-colors duration-200"
