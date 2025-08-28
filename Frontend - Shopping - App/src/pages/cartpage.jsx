@@ -295,7 +295,19 @@ const CartPage = () => {
                               {isUpdating ? 'Removing...' : 'Delete'}
                             </button>
                             
-                            <button className="text-sm text-blue-600 hover:text-orange-600 hover:underline">
+                            <button
+                              onClick={async ()=>{
+                                try {
+                                  await fetch('http://localhost:3900/api/v1/wishlist', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ productId: item.productId, name: item.name, price: item.price, thumbnail: item.thumbnail })
+                                  });
+                                  await removeItem(itemId);
+                                } catch {}
+                              }}
+                              className="text-sm text-blue-600 hover:text-orange-600 hover:underline"
+                            >
                               Save for later
                             </button>
                             

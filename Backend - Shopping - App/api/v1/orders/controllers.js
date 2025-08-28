@@ -1,5 +1,7 @@
 const { orderModel } = require("../../../models/orderSchema.js");
 const { cartModel } = require("../../../models/cartSchema.js");
+const { UserModel } = require("../../../models/userSchema.js");
+const { sendOrderSuccessEmail } = require("../../../utils/emailhelper.js");
 
 const createOrder = async (req, res) => {
   try {
@@ -54,6 +56,23 @@ const createOrder = async (req, res) => {
     // Clear cart after successful order creation
     cart.items = [];
     await cart.save();
+
+    // Send order confirmation email (best-effort)
+    try {
+      const user = await UserModel.findById(userId).select('email');
+      if (user && user.email) {
+        await sendOrderSuccessEmail(user.email, {
+          orderId: order._id,
+          orderNumber: order.orderNumber,
+          totalAmount: order.totalAmount,
+          status: order.status,
+          items: order.items,
+        });
+      }
+    } catch (e) {
+      console.error('Failed to send order email:', e?.message || e);
+      // Do not fail order creation if email fails
+    }
 
     res.status(201).json({
       success: true,

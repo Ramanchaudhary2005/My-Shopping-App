@@ -11,6 +11,8 @@ const ViewPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [wishMessage, setWishMessage] = useState("");
   const [hoveredImage, setHoveredImage] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -74,6 +76,32 @@ const ViewPage = () => {
     await addToCart();
   };
 
+  const addToWishlist = async () => {
+    try {
+      setIsAddingToWishlist(true);
+      const body = {
+        productId: product._id,
+        name: product.title,
+        price: parseFloat(product.price),
+        thumbnail: product.thumbnail || product.images?.[0]
+      };
+      const res = await fetch('http://localhost:3900/api/v1/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to add to wishlist');
+      setWishMessage('Added to wishlist');
+      setTimeout(()=> setWishMessage(''), 1200);
+    } catch (e) {
+      setWishMessage(e.message || 'Failed to add to wishlist');
+      setTimeout(()=> setWishMessage(''), 1500);
+    } finally {
+      setIsAddingToWishlist(false);
+    }
+  };
+
   // Handle mouse movement for magnifier
   const handleMouseMove = (e, imageUrl) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -110,6 +138,14 @@ const ViewPage = () => {
 
   const discountedPrice = (product.price * (1 - product.discountPercentage / 100) * 88).toFixed(0);
   const originalPrice = (product.price * 88).toFixed(0);
+  const deliveryWindow = "7 am - 9 pm";
+  const twoDaysAhead = new Date();
+  twoDaysAhead.setDate(twoDaysAhead.getDate() + 2);
+  const deliveryDateDisplay = new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  }).format(twoDaysAhead);
 
   return (
     <div className="bg-white min-h-screen relative">
@@ -286,7 +322,7 @@ const ViewPage = () => {
 
               <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded text-sm">
                 <span className="bg-green-700 text-white px-1 py-0.5 rounded text-xs mr-2">Fulfilled</span>
-                FREE scheduled delivery as soon as <span className="font-medium">Wednesday, 27 August, 7 am - 9 pm.</span>
+                FREE scheduled delivery as soon as <span className="font-medium">{deliveryDateDisplay}, {deliveryWindow}.</span>
                 <span className="text-blue-600 hover:text-orange-600 hover:underline cursor-pointer ml-1">Details</span>
               </div>
 
@@ -322,10 +358,11 @@ const ViewPage = () => {
                 </button>
               </div>
 
-              <button className="w-full mt-4 text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center gap-1">
+              <button onClick={addToWishlist} disabled={isAddingToWishlist} className="w-full mt-4 text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center gap-1 disabled:opacity-50">
                 <Heart className="w-4 h-4" />
-                Add to Wish List
+                {isAddingToWishlist ? 'Adding…' : 'Add to Wish List'}
               </button>
+              {wishMessage && <div className="mt-2 text-center text-green-700 text-xs">{wishMessage}</div>}
             </div>
           </div>
         </div>

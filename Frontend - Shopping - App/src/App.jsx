@@ -10,6 +10,9 @@ import { OrderPage } from "./pages/orderpage";
 import { isAuthenticated } from "./utils/auth";
 import { AddressPage } from "./pages/addresspage";
 import { OrderHistoryPage } from "./pages/orderhistorypage";
+import { ProfilePage } from "./pages/profilepage";
+import { AddressesPage } from "./pages/addressespage";
+import { WishlistPage } from "./pages/wishlistpage";
 
 const ProtectedRoute = ({ children }) => {
   const authed = isAuthenticated();
@@ -46,6 +49,21 @@ const App = () => {
         <Route path="/order-history" element={
           <ProtectedRoute>
             <OrderHistoryPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        } />
+        <Route path="/addresses" element={
+          <ProtectedRoute>
+            <AddressesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/wishlist" element={
+          <ProtectedRoute>
+            <WishlistPage />
           </ProtectedRoute>
         } />
         <Route path="*" element={<PageNotFound />} />

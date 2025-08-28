@@ -5,6 +5,7 @@ const { otpRouter } = require("./otps/routes");
 const { cartRouter } = require("./cart/routes");
 const { orderRouter } = require("./orders/routes");
 const { usersRouter } = require("./users/routes");
+const { wishlistRouter } = require("./wishlist/routes");
 
 
 const apiRouter = express.Router();
@@ -15,6 +16,7 @@ apiRouter.use("/otps", otpRouter);
 apiRouter.use("/cart", cartRouter);
 apiRouter.use("/orders", orderRouter);
 apiRouter.use("/users", usersRouter);
+apiRouter.use("/wishlist", wishlistRouter);
 
 
 module.exports = { apiRouter };

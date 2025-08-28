@@ -77,12 +77,18 @@ const Navbar = () => {
                 )}
 
                 {loggedIn && (
-                    <button
-                        onClick={handleLogout}
-                        className="text-zinc-300 font-medium hover:text-white hover:bg-zinc-800 px-3 py-2 rounded-lg transition-colors duration-200"
-                    >
-                        Logout
-                    </button>
+                    <>
+                        <Link to="/cart" className="relative text-zinc-300 font-medium hover:text-white hover:bg-zinc-800 px-3 py-2 rounded-lg transition-colors duration-200">
+                            Cart
+                            <span className="absolute -top-1 -right-1 text-xs bg-red-600 text-white rounded-full px-1.5 py-0.5">{/* cart count */}</span>
+                        </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="text-zinc-300 font-medium hover:text-white hover:bg-zinc-800 px-3 py-2 rounded-lg transition-colors duration-200"
+                        >
+                            Logout
+                        </button>
+                    </>
                 )}
 
                 <button
@@ -106,9 +112,12 @@ const Navbar = () => {
                             {loggedIn ? (
                                 <>
                                     <button onClick={handleLogout} className="text-left w-full px-3 py-2 rounded hover:bg-zinc-800">Signout</button>
+                                    <Link to="/profile" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Profile</Link>
                                     <Link to="/address" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Address</Link>
+                                    <Link to="/addresses" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Manage Addresses</Link>
                                     <Link to="/orders" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Orders</Link>
                                     <Link to="/order-history" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Order History</Link>
+                                    <Link to="/wishlist" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Wishlist</Link>
                                 </>
                             ) : (
                                 <>
