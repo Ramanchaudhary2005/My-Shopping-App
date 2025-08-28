@@ -13,6 +13,7 @@ import { OrderHistoryPage } from "./pages/orderhistorypage";
 import { ProfilePage } from "./pages/profilepage";
 import { AddressesPage } from "./pages/addressespage";
 import { WishlistPage } from "./pages/wishlistpage";
+import { Footer } from "./components/footer";
 
 const ProtectedRoute = ({ children }) => {
   const authed = isAuthenticated();
@@ -68,6 +69,7 @@ const App = () => {
         } />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };
