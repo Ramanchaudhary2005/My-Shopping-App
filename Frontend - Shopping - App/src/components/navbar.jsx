@@ -118,6 +118,7 @@ const Navbar = () => {
                                     <Link to="/orders" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Orders</Link>
                                     <Link to="/order-history" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Order History</Link>
                                     <Link to="/wishlist" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Wishlist</Link>
+                                    <Link to="/seller" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-zinc-800">Become a Seller</Link>
                                 </>
                             ) : (
                                 <>

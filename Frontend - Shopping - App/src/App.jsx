@@ -14,6 +14,7 @@ import { ProfilePage } from "./pages/profilepage";
 import { AddressesPage } from "./pages/addressespage";
 import { WishlistPage } from "./pages/wishlistpage";
 import { Footer } from "./components/footer";
+import { SellerPage } from "./pages/sellerpage";
 
 const ProtectedRoute = ({ children }) => {
   const authed = isAuthenticated();
@@ -65,6 +66,11 @@ const App = () => {
         <Route path="/wishlist" element={
           <ProtectedRoute>
             <WishlistPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/seller" element={
+          <ProtectedRoute>
+            <SellerPage />
           </ProtectedRoute>
         } />
         <Route path="*" element={<PageNotFound />} />
