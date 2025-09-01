@@ -109,7 +109,7 @@ const WishlistPage = () => {
                         onClick={() => moveToCart(item._id)}
                         className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                       >
-                        MOVE TO BAG
+                        MOVE TO CART
                       </button>
                     </div>
                   </div>
