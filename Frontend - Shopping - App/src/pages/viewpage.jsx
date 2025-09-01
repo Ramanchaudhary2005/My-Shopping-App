@@ -345,14 +345,14 @@ const ViewPage = () => {
                 <button 
                   onClick={addToCart}
                   disabled={isAddingToCart}
-                  className="w-full bg-orange-400 hover:bg-orange-500 text-black font-medium py-2 rounded-full transition-colors disabled:opacity-50"
+                  className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 rounded-lg transition-colors disabled:opacity-50"
                 >
                   {isAddingToCart ? 'Adding to Cart...' : 'Add to Cart'}
                 </button>
                 <button 
                   onClick={buyNow}
                   disabled={isAddingToCart}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2 rounded-full transition-colors disabled:opacity-50"
+                  className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 rounded-lg transition-colors disabled:opacity-50"
                 >
                   {isAddingToCart ? 'Processing...' : 'Buy Now'}
                 </button>
