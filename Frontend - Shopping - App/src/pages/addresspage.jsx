@@ -65,7 +65,7 @@ const AddressPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 pt-24">
         <h1 className="text-2xl font-bold mb-4">Your Address</h1>
         <form onSubmit={handleSave} className="bg-white p-6 rounded-lg shadow-sm space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

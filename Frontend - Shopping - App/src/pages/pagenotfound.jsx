@@ -8,7 +8,7 @@ const PageNotFound = () => {
       <Navbar />
 
       {/* Center Content */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-4 pt-24">
         <h1 className="text-[100px] font-extrabold text-white">
           <span className="text-blue-500">404</span> Error
         </h1>

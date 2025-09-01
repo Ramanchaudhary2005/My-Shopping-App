@@ -123,7 +123,7 @@ const ViewPage = () => {
   if (loading) return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen pt-24">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
       </div>
     </div>
@@ -132,7 +132,7 @@ const ViewPage = () => {
   if (!product) return (
     <div>
       <Navbar />
-      <p className="text-center mt-20 text-lg text-gray-600">Product not found.</p>
+      <p className="text-center mt-20 text-lg text-gray-600 pt-24">Product not found.</p>
     </div>
   );
 
@@ -152,7 +152,7 @@ const ViewPage = () => {
       <Navbar />
       
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 py-2">
+      <div className="max-w-7xl mx-auto px-4 py-2 pt-24">
         <nav className="text-sm text-gray-600">
           <span>Home</span> › <span>Electronics</span> › <span className="text-orange-600">{product.category}</span>
         </nav>

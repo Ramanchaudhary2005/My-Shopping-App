@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(to right, #6a11cb, #2575fc);
+  padding-top: 80px; /* Account for fixed navbar */
 }
 
 /* Card */

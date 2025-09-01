@@ -196,7 +196,7 @@ const HomePage = () => {
     return (
       <div className="bg-zinc-100 min-h-screen">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex items-center justify-center min-h-[60vh] pt-24">
           <HashLoader size={70} color="#4F39F6" />
         </div>
       </div>
@@ -207,7 +207,7 @@ const HomePage = () => {
     <div className="bg-zinc-100 min-h-screen">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 pt-24">
         {/* Hero Banner */}
         <div className="relative mb-8">
           <div className={`bg-gradient-to-r ${banners[currentBanner].gradient} rounded-xl p-8 text-center relative overflow-hidden`}>

@@ -171,7 +171,7 @@ const OrderPage = () => {
     return (
       <div className="bg-gray-50 min-h-screen">
         <Navbar />
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen pt-24">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
         </div>
       </div>
@@ -182,7 +182,7 @@ const OrderPage = () => {
     return (
       <div className="bg-gray-50 min-h-screen">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-8 pt-24">
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
             <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
               <CheckCircle className="w-12 h-12 text-green-600" />
@@ -240,7 +240,7 @@ const OrderPage = () => {
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
       
-      <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-4 py-6 pt-24">
         
         {/* Header */}
         <div className="mb-6">

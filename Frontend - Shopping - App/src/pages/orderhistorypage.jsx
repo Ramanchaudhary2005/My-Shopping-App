@@ -41,7 +41,7 @@ const OrderHistoryPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="max-w-5xl mx-auto px-4 py-6 pt-24">
         <h1 className="text-2xl font-bold mb-4">Order History</h1>
         {loading && (
           <div className="flex items-center justify-center py-10">

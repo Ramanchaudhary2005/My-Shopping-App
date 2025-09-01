@@ -251,7 +251,7 @@ const SearchPage = () => {
       <Navbar />
       
       {/* Mobile Filter Toggle */}
-      <div className="lg:hidden px-4 py-2 bg-white border-b">
+      <div className="lg:hidden px-4 py-2 bg-white border-b pt-24">
         <button
           onClick={() => setShowMobileFilters(!showMobileFilters)}
           className="flex items-center gap-2 text-sm font-medium text-blue-600"

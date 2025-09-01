@@ -59,7 +59,7 @@ const SellerPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 pt-24">
         <h1 className="text-2xl font-bold mb-4">Become a Seller</h1>
         <p className="text-sm text-gray-600 mb-4">Add your product details below to list it on the store.</p>
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm space-y-4">
