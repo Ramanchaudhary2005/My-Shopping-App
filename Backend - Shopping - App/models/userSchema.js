@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");   
 const { Schema, model } = mongoose;
+const bcrypt = require("bcryptjs");
 
 const addressSubSchema = new Schema({
     fullName: { type: String, trim: true },
@@ -37,6 +38,33 @@ const userSchema = new Schema({
     },
     dateofbirth: { type: Date },
 }); 
+
+// Pre-save middleware to hash password
+userSchema.pre('save', async function(next) {
+    // Only hash the password if it has been modified (or is new)
+    if (!this.isModified('password')) return next();
+    
+    try {
+        // Hash password with salt rounds of 12
+        const salt = await bcrypt.genSalt(12);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Method to compare password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Method to get user data without password
+userSchema.methods.toSafeObject = function() {
+    const userObject = this.toObject();
+    delete userObject.password;
+    return userObject;
+};
 
 const UserModel = model("User", userSchema);
 

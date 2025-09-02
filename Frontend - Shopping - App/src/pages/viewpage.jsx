@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Navbar } from "../components/navbar";
-import { Star, Heart, Share2, Shield, Truck, RotateCcw } from "lucide-react";
+import { Star, Heart, Share2, Shield, Truck, RotateCcw, Eye } from "lucide-react";
 
 const ViewPage = () => {
   const { productId } = useParams();
@@ -15,6 +15,65 @@ const ViewPage = () => {
   const [wishMessage, setWishMessage] = useState("");
   const [hoveredImage, setHoveredImage] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [loadingRecent, setLoadingRecent] = useState(false);
+
+  // Utility functions for recently viewed products
+  const addToRecentlyViewed = (product) => {
+    try {
+      const recent = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      const existingIndex = recent.findIndex(p => p._id === product._id);
+      
+      if (existingIndex > -1) {
+        // Remove existing product
+        recent.splice(existingIndex, 1);
+      }
+      
+      // Add to beginning of array
+      const productToAdd = {
+        _id: product._id,
+        title: product.title,
+        price: product.price,
+        discountPercentage: product.discountPercentage,
+        thumbnail: product.thumbnail || product.images?.[0],
+        rating: product.rating,
+        brand: product.brand
+      };
+      
+      recent.unshift(productToAdd);
+      
+      // Keep only last 8 products
+      if (recent.length > 8) {
+        recent.splice(8);
+      }
+      
+      localStorage.setItem('recentlyViewed', JSON.stringify(recent));
+      setRecentlyViewed(recent);
+    } catch (error) {
+      console.error('Error saving to recently viewed:', error);
+    }
+  };
+
+  const getRecentlyViewed = () => {
+    try {
+      const recent = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      // Filter out current product
+      const filtered = recent.filter(p => p._id !== productId);
+      setRecentlyViewed(filtered);
+    } catch (error) {
+      console.error('Error getting recently viewed:', error);
+      setRecentlyViewed([]);
+    }
+  };
+
+  const clearRecentlyViewed = () => {
+    try {
+      localStorage.removeItem('recentlyViewed');
+      setRecentlyViewed([]);
+    } catch (error) {
+      console.error('Error clearing recently viewed:', error);
+    }
+  };
 
   const getProductViaPatch = async () => {
     try {
@@ -28,6 +87,11 @@ const ViewPage = () => {
       if (!response.ok) throw new Error("Failed to fetch product");
       const data = await response.json();
       setProduct(data.data.product);
+      
+      // Add to recently viewed after successful fetch
+      if (data.data.product) {
+        addToRecentlyViewed(data.data.product);
+      }
     } catch (err) {
       alert("Cannot load product");
     } finally {
@@ -118,6 +182,7 @@ const ViewPage = () => {
 
   useEffect(() => {
     getProductViaPatch();
+    getRecentlyViewed(); // Fetch recently viewed products on mount
   }, [productId]);
 
   if (loading) return (
@@ -383,6 +448,90 @@ const ViewPage = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Recently Viewed Products */}
+        <div className="mt-8 max-w-6xl">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Eye className="w-5 h-5 text-gray-600" />
+              Recently Viewed Products
+            </h2>
+            {recentlyViewed.length > 0 && (
+              <button
+                onClick={clearRecentlyViewed}
+                className="text-sm text-gray-500 hover:text-red-600 transition-colors px-3 py-1 rounded border border-gray-300 hover:border-red-300"
+              >
+                Clear History
+              </button>
+            )}
+          </div>
+          {recentlyViewed.length === 0 ? (
+            <div className="text-center py-8">
+              <Eye className="w-16 h-16 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500">No recently viewed products yet.</p>
+              <p className="text-sm text-gray-400">Products you view will appear here</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {recentlyViewed.slice(0, 8).map((item, index) => {
+                const discountedPrice = (item.price * (1 - item.discountPercentage / 100) * 88).toFixed(0);
+                const originalPrice = (item.price * 88).toFixed(0);
+                
+                return (
+                  <div 
+                    key={index} 
+                    className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
+                    onClick={() => navigate(`/view/${item._id}`)}
+                  >
+                    <div className="p-3">
+                      <div className="relative mb-3">
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title}
+                          className="w-full h-32 object-contain rounded group-hover:scale-105 transition-transform duration-200"
+                        />
+                        {item.discountPercentage > 0 && (
+                          <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+                            -{Math.round(item.discountPercentage)}%
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        
+                        <div className="flex items-center gap-1">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <Star 
+                                key={i} 
+                                className={`w-3 h-3 ${i < Math.floor(item.rating) ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} 
+                              />
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-500 ml-1">({item.rating.toFixed(1)})</span>
+                        </div>
+                        
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-lg font-semibold text-gray-900">₹{discountedPrice}</span>
+                          {item.discountPercentage > 0 && (
+                            <span className="text-sm text-gray-500 line-through">₹{originalPrice}</span>
+                          )}
+                        </div>
+                        
+                        {item.brand && (
+                          <p className="text-xs text-blue-600 font-medium">{item.brand.toUpperCase()}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Reviews Section */}

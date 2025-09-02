@@ -45,19 +45,19 @@ const Navbar = () => {
                     {/* Navigation Links */}
                     <div className="hidden md:flex items-center space-x-8 ml-12">
                         
-                        <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+                        <Link to="/search?category=fashion" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
                             FASHION
                         </Link>
-                        <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+                        <Link to="/search?category=kids" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
                             KIDS
                         </Link>
-                        <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+                        <Link to="/search?category=home" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
                             HOME
                         </Link>
-                        <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+                        <Link to="/search?category=electronics" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
                             ELECTRONICS
                         </Link>
-                        <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+                        <Link to="/search?category=sport" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
                             SPORT
                         </Link>
                     </div>
@@ -79,6 +79,15 @@ const Navbar = () => {
 
                     {/* User Icons */}
                     <div className="flex items-center space-x-6">
+                        {/* Recently Viewed - Always Visible */}
+                        <Link to="/recently-viewed" className="flex flex-col items-center text-gray-700 hover:text-gray-900 transition-colors">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <span className="text-xs mt-1">Recent</span>
+                        </Link>
+                        
                         {!loggedIn ? (
                             <>
                                 <Link to="/login" className="flex flex-col items-center text-gray-700 hover:text-gray-900 transition-colors">
@@ -140,6 +149,15 @@ const Navbar = () => {
                             <button onClick={()=> setIsMenuOpen(false)} className="px-2 py-1 rounded hover:bg-gray-100 text-gray-600">✕</button>
                         </div>
                         <div className="flex flex-col gap-2">
+                            {/* Recently Viewed Products - Always Visible */}
+                            <Link to="/recently-viewed" onClick={()=> setIsMenuOpen(false)} className="px-3 py-2 rounded hover:bg-gray-100 text-gray-700 flex items-center gap-2">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Recently Viewed Products
+                            </Link>
+                            
                             {loggedIn ? (
                                 <>
                                     <button onClick={handleLogout} className="text-left w-full px-3 py-2 rounded hover:bg-gray-100 text-gray-700">Signout</button>

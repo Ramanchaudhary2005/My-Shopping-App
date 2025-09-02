@@ -3,6 +3,7 @@ import { Navbar } from "../components/navbar";
 import { useNavigate } from "react-router-dom"; 
 import { HashLoader } from "react-spinners"; 
 import "./signup.css";
+import { loginLocal } from "../utils/auth";
 
 const SignupPage = () => {
   const [step, setStep] = useState(1);
@@ -57,8 +58,25 @@ const SignupPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setMessage("🎉 Signup successful! Please login.");
+        setMessage("🎉 Signup successful! Auto-login and redirecting...");
         setSignupSuccess(true);
+        
+        // Auto-login with JWT token
+        try {
+          const token = data?.data?.token;
+          const userData = data?.data?.user;
+          
+          if (token) {
+            loginLocal(token, userData);
+            // Redirect to home page after successful signup and auto-login
+            setTimeout(() => {
+              navigate("/");
+            }, 1500);
+          }
+        } catch (error) {
+          console.error('Error during auto-login:', error);
+          setMessage("🎉 Signup successful! Please login.");
+        }
       } else {
         if (data.message && data.message.includes("already exists")) {
           setMessage("❌ Signup failed: User already exists with this email.");

@@ -15,7 +15,7 @@ const SearchPage = () => {
 
   // Filter and sort states
   const [filters, setFilters] = useState({
-    category: '',
+    category: query.get("category") || '',
     minPrice: '',
     maxPrice: '',
     minRating: '',
@@ -80,6 +80,17 @@ const SearchPage = () => {
     setPage(1); // Reset to first page when filters change
   }, [filters, query.get("text")]);
 
+  // Update filters when URL category parameter changes
+  useEffect(() => {
+    const urlCategory = query.get("category");
+    if (urlCategory && urlCategory !== filters.category) {
+      setFilters(prev => ({
+        ...prev,
+        category: urlCategory
+      }));
+    }
+  }, [query.get("category")]);
+
   useEffect(() => {
     getAllProducts();
     // eslint-disable-next-line
@@ -142,7 +153,20 @@ const SearchPage = () => {
 
       {/* Category Filter */}
       <div className="mb-6">
-        <h4 className="font-medium mb-3 text-gray-700">Category</h4>
+        <div className="flex justify-between items-center mb-3">
+          <h4 className="font-medium text-gray-700">Category</h4>
+          {filters.category && (
+            <button 
+              onClick={() => {
+                handleFilterChange('category', '');
+                navigate('/search');
+              }}
+              className="text-xs text-blue-600 hover:underline"
+            >
+              Clear
+            </button>
+          )}
+        </div>
         <div className="space-y-2 max-h-48 overflow-y-auto">
           {categories.map((category) => (
             <label key={category} className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
@@ -252,15 +276,29 @@ const SearchPage = () => {
       
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden px-4 py-2 bg-white border-b pt-24">
-        <button
-          onClick={() => setShowMobileFilters(!showMobileFilters)}
-          className="flex items-center gap-2 text-sm font-medium text-blue-600"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z" />
-          </svg>
-          Filters & Sort
-        </button>
+        <div className="flex justify-between items-center">
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="flex items-center gap-2 text-sm font-medium text-blue-600"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z" />
+            </svg>
+            Filters & Sort
+          </button>
+          
+          {query.get("category") && (
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">{query.get("category").charAt(0).toUpperCase() + query.get("category").slice(1)}</span>
+              <button 
+                onClick={() => navigate('/search')}
+                className="ml-2 text-blue-600 hover:underline"
+              >
+                Clear
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto py-6 px-4">
@@ -292,12 +330,47 @@ const SearchPage = () => {
 
           {/* Main Content */}
           <div className="flex-1 min-w-0">
+            {/* Breadcrumb Navigation */}
+            {query.get("category") && (
+              <div className="bg-white rounded-lg shadow-sm p-3 mb-4">
+                <div className="flex justify-between items-center">
+                  <nav className="text-sm text-gray-600">
+                    <span 
+                      className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                      onClick={() => navigate('/search')}
+                    >
+                      Home
+                    </span>
+                    <span className="mx-2">›</span>
+                    <span className="text-gray-900 font-medium">
+                      {query.get("category").charAt(0).toUpperCase() + query.get("category").slice(1)}
+                    </span>
+                  </nav>
+                  <button
+                    onClick={() => navigate('/search')}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium px-3 py-1 border border-blue-200 rounded hover:bg-blue-50 transition-colors"
+                  >
+                    View All Categories
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {/* Results Header */}
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-medium">
-                  {query.get("text") ? `Search results for "${query.get("text")}"` : 'All Products'}
-                </h2>
+                <div>
+                  <h2 className="text-lg font-medium">
+                    {query.get("text") ? `Search results for "${query.get("text")}"` : 
+                     query.get("category") ? `${query.get("category").charAt(0).toUpperCase() + query.get("category").slice(1)} Products` : 
+                     'All Products'}
+                  </h2>
+                  {query.get("category") && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Browsing {query.get("category").toLowerCase()} category
+                    </p>
+                  )}
+                </div>
                 <span className="text-sm text-gray-600">
                   {total} results
                 </span>

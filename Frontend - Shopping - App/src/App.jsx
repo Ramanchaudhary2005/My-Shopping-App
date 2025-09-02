@@ -13,6 +13,7 @@ import { OrderHistoryPage } from "./pages/orderhistorypage";
 import { ProfilePage } from "./pages/profilepage";
 import { AddressesPage } from "./pages/addressespage";
 import { WishlistPage } from "./pages/wishlistpage";
+import { RecentlyViewedPage } from "./pages/recentlyviewedpage";
 import { Footer } from "./components/footer";
 import { SellerPage } from "./pages/sellerpage";
 
@@ -68,6 +69,7 @@ const App = () => {
             <WishlistPage />
           </ProtectedRoute>
         } />
+        <Route path="/recently-viewed" element={<RecentlyViewedPage />} />
         <Route path="/seller" element={
           <ProtectedRoute>
             <SellerPage />

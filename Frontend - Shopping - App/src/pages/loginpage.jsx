@@ -28,12 +28,17 @@ const LoginPage = () => {
       if (response.ok) {
         setMessage("🎉 Login successful! Redirecting...");
         try {
-          const userId = data?.data?.user?._id;
-          if (userId) {
-            localStorage.setItem('userId', userId);
+          // Store JWT token and user data
+          const token = data?.data?.token;
+          const userData = data?.data?.user;
+          
+          if (token) {
+            loginLocal(token, userData);
           }
-          loginLocal();
-        } catch {}
+        } catch (error) {
+          console.error('Error storing login data:', error);
+        }
+        
         setTimeout(() => {
           setLoading(false);
           // redirect to dashboard or home page
