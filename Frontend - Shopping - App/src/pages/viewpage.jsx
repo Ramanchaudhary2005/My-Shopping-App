@@ -289,12 +289,12 @@ const ViewPage = () => {
 
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center">
-                <span className="text-orange-500 text-lg">{product.rating.toFixed(1)}</span>
+                <span className="text-orange-500 text-lg">{(product.rating || 0).toFixed(1)}</span>
                 <div className="flex ml-1">
                   {[...Array(5)].map((_, i) => (
                     <Star 
                       key={i} 
-                      className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} 
+                      className={`w-4 h-4 ${i < Math.floor(product.rating || 0) ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} 
                     />
                   ))}
                 </div>
@@ -310,7 +310,7 @@ const ViewPage = () => {
 
             <div className="border-t border-b py-4 mb-4">
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-red-600 text-lg font-normal">-{Math.round(product.discountPercentage)}%</span>
+                <span className="text-red-600 text-lg font-normal">-{Math.round(product.discountPercentage || 0)}%</span>
                 <span className="text-3xl font-normal">₹{discountedPrice}</span>
               </div>
               <div className="text-sm text-gray-600">
@@ -351,8 +351,8 @@ const ViewPage = () => {
             <div className="mt-4">
               <div className="text-sm mb-2">
                 <span className="font-medium">Availability: </span>
-                <span className={`${product.availabilityStatus === 'In Stock' ? 'text-green-700' : 'text-red-600'} font-medium`}>
-                  {product.availabilityStatus}
+                <span className={`${(product.availabilityStatus || 'Out of Stock') === 'In Stock' ? 'text-green-700' : 'text-red-600'} font-medium`}>
+                  {product.availabilityStatus || 'Out of Stock'}
                 </span>
               </div>
               <div className="text-sm text-gray-600 mb-2">
@@ -440,11 +440,11 @@ const ViewPage = () => {
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium">Shipping: </span>
-                <span>{product.shippingInformation}</span>
+                <span>{product.shippingInformation || 'Standard shipping available'}</span>
               </div>
               <div>
                 <span className="font-medium">Warranty: </span>
-                <span>{product.warrantyInformation}</span>
+                <span>{product.warrantyInformation || '1 year manufacturer warranty'}</span>
               </div>
             </div>
           </div>
@@ -475,7 +475,7 @@ const ViewPage = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {recentlyViewed.slice(0, 8).map((item, index) => {
-                const discountedPrice = (item.price * (1 - item.discountPercentage / 100) * 88).toFixed(0);
+                const discountedPrice = (item.price * (1 - (item.discountPercentage || 0) / 100) * 88).toFixed(0);
                 const originalPrice = (item.price * 88).toFixed(0);
                 
                 return (
@@ -488,12 +488,12 @@ const ViewPage = () => {
                       <div className="relative mb-3">
                         <img 
                           src={item.thumbnail} 
-                          alt={item.title}
+                          alt={item.title || 'Product image'}
                           className="w-full h-32 object-contain rounded group-hover:scale-105 transition-transform duration-200"
                         />
-                        {item.discountPercentage > 0 && (
+                        {(item.discountPercentage || 0) > 0 && (
                           <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-                            -{Math.round(item.discountPercentage)}%
+                            -{Math.round(item.discountPercentage || 0)}%
                           </div>
                         )}
                       </div>
@@ -508,16 +508,16 @@ const ViewPage = () => {
                             {[...Array(5)].map((_, i) => (
                               <Star 
                                 key={i} 
-                                className={`w-3 h-3 ${i < Math.floor(item.rating) ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} 
+                                className={`w-3 h-3 ${i < Math.floor(item.rating || 0) ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} 
                               />
                             ))}
                           </div>
-                          <span className="text-xs text-gray-500 ml-1">({item.rating.toFixed(1)})</span>
+                          <span className="text-xs text-gray-500 ml-1">({(item.rating || 0).toFixed(1)})</span>
                         </div>
                         
                         <div className="flex items-baseline gap-2">
                           <span className="text-lg font-semibold text-gray-900">₹{discountedPrice}</span>
-                          {item.discountPercentage > 0 && (
+                          {(item.discountPercentage || 0) > 0 && (
                             <span className="text-sm text-gray-500 line-through">₹{originalPrice}</span>
                           )}
                         </div>
