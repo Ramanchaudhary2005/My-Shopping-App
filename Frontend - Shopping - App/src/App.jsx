@@ -82,4 +82,4 @@ const App = () => {
   );
 };
 
-export default App;
+export { App };
