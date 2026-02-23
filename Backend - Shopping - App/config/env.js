@@ -4,7 +4,7 @@
 module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production',
   PORT: process.env.PORT || 3900,
-  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/shopping-app',
+  MONGODB_URI: process.env.MONGODB_URL || 'mongodb://localhost:27017/shopping-app',
   NODE_ENV: process.env.NODE_ENV || 'development',
   
   // Email Configuration (if using nodemailer)

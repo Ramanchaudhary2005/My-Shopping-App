@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Navbar } from "../components/navbar";
 import { Star, Heart, Share2, Shield, Truck, RotateCcw, Eye } from "lucide-react";
 
@@ -16,10 +16,9 @@ const ViewPage = () => {
   const [hoveredImage, setHoveredImage] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [recentlyViewed, setRecentlyViewed] = useState([]);
-  const [loadingRecent, setLoadingRecent] = useState(false);
 
   // Utility functions for recently viewed products
-  const addToRecentlyViewed = (product) => {
+  const addToRecentlyViewed = useCallback((product) => {
     try {
       const recent = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
       const existingIndex = recent.findIndex(p => p._id === product._id);
@@ -52,9 +51,9 @@ const ViewPage = () => {
     } catch (error) {
       console.error('Error saving to recently viewed:', error);
     }
-  };
+  }, []);
 
-  const getRecentlyViewed = () => {
+  const getRecentlyViewed = useCallback(() => {
     try {
       const recent = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
       // Filter out current product
@@ -64,7 +63,7 @@ const ViewPage = () => {
       console.error('Error getting recently viewed:', error);
       setRecentlyViewed([]);
     }
-  };
+  }, [productId]);
 
   const clearRecentlyViewed = () => {
     try {
@@ -75,7 +74,7 @@ const ViewPage = () => {
     }
   };
 
-  const getProductViaPatch = async () => {
+  const getProductViaPatch = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`http://localhost:3900/api/v1/products/view/${productId}`, {
@@ -92,12 +91,13 @@ const ViewPage = () => {
       if (data.data.product) {
         addToRecentlyViewed(data.data.product);
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Error loading product:', error);
       alert("Cannot load product");
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToRecentlyViewed, productId]);
 
   const addToCart = async () => {
     try {
@@ -183,7 +183,7 @@ const ViewPage = () => {
   useEffect(() => {
     getProductViaPatch();
     getRecentlyViewed(); // Fetch recently viewed products on mount
-  }, [productId]);
+  }, [getProductViaPatch, getRecentlyViewed]);
 
   if (loading) return (
     <div>

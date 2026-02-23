@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Navbar } from "../components/navbar";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { HashLoader } from "react-spinners";
@@ -6,6 +6,8 @@ import Pagination from "../components/pagination.jsx";
 
 const SearchPage = () => {
   const [query] = useSearchParams();
+  const textQuery = query.get("text") || "";
+  const categoryQuery = query.get("category") || "";
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
@@ -15,7 +17,7 @@ const SearchPage = () => {
 
   // Filter and sort states
   const [filters, setFilters] = useState({
-    category: query.get("category") || '',
+    category: categoryQuery,
     minPrice: '',
     maxPrice: '',
     minRating: '',
@@ -40,13 +42,13 @@ const SearchPage = () => {
     'Automotive'
   ];
 
-  const getAllProducts = async () => {
+  const getAllProducts = useCallback(async () => {
     try {
       setLoading(true);
       
       // Build query parameters
       const params = new URLSearchParams({
-        q: query.get("text") || '',
+        q: textQuery,
         limit: limit.toString(),
         page: page.toString(),
       });
@@ -69,32 +71,31 @@ const SearchPage = () => {
       const data = await response.json();
       setProducts(data.data.products || []);
       setTotal(data.data.total || 0);
-    } catch (err) {
+    } catch (error) {
+      console.error("Error fetching search products:", error);
       alert("Cannot get products");
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, limit, page, textQuery]);
 
   useEffect(() => {
     setPage(1); // Reset to first page when filters change
-  }, [filters, query.get("text")]);
+  }, [filters, textQuery]);
 
   // Update filters when URL category parameter changes
   useEffect(() => {
-    const urlCategory = query.get("category");
-    if (urlCategory && urlCategory !== filters.category) {
+    if (categoryQuery !== filters.category) {
       setFilters(prev => ({
         ...prev,
-        category: urlCategory
+        category: categoryQuery
       }));
     }
-  }, [query.get("category")]);
+  }, [categoryQuery, filters.category]);
 
   useEffect(() => {
     getAllProducts();
-    // eslint-disable-next-line
-  }, [query.get("text"), page, filters]);
+  }, [getAllProducts]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -233,7 +234,7 @@ const SearchPage = () => {
               name="rating"
               value=""
               checked={!filters.minRating}
-              onChange={(e) => handleFilterChange('minRating', '')}
+              onChange={() => handleFilterChange('minRating', '')}
               className="mr-2"
             />
             <span className="text-sm">All Ratings</span>

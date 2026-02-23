@@ -207,9 +207,6 @@ const CartPage = () => {
               <div className="divide-y">
                 {cartItems.map((item, index) => {
                   const itemId = item._id;
-                  const discountedPrice = item.discountedPrice || 
-                    (item.price * (1 - (item.discountPercentage || 0) / 100)).toFixed(0);
-                  const originalPrice = item.originalPrice || item.price;
                   const imageUrl = item.thumbnail || item.image || item.images?.[0];
                   
                   return (
@@ -304,7 +301,10 @@ const CartPage = () => {
                                     body: JSON.stringify({ productId: item.productId, name: item.name, price: item.price, thumbnail: item.thumbnail })
                                   });
                                   await removeItem(itemId);
-                                } catch {}
+                                } catch (error) {
+                                  console.error('Error saving item for later:', error);
+                                  alert('Failed to save item for later');
+                                }
                               }}
                               className="text-sm text-blue-600 hover:text-orange-600 hover:underline"
                             >

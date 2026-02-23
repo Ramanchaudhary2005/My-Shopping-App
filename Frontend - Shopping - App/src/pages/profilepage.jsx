@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Navbar } from "../components/navbar";
 
 const ProfilePage = () => {
@@ -19,7 +19,7 @@ const ProfilePage = () => {
 
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       if (!userId) return;
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/profile`);
@@ -39,10 +39,14 @@ const ProfilePage = () => {
           paymentPreference: d.paymentPreference || "cash_on_delivery",
         });
       }
-    } catch {}
-  };
+    } catch (error) {
+      console.error("Error loading profile:", error);
+    }
+  }, [userId]);
 
-  useEffect(() => { loadProfile(); }, []);
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   const handleSave = async (e) => {
     e.preventDefault();

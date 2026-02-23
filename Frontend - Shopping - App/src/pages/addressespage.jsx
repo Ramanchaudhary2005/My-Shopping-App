@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Navbar } from "../components/navbar";
 
 const emptyAddr = { fullName: "", phone: "", street: "", city: "", state: "", zipCode: "", country: "India", isDefault: false };
@@ -10,16 +10,21 @@ const AddressesPage = () => {
   const [message, setMessage] = useState("");
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
 
-  const loadAddresses = async () => {
+  const loadAddresses = useCallback(async () => {
     try {
       if (!userId) return;
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/addresses`);
       const data = await res.json();
       if (res.ok) setAddresses(data.data || []);
-    } catch {}
-  };
+    } catch (error) {
+      console.error("Error loading addresses:", error);
+      setMessage("Failed to load addresses");
+    }
+  }, [userId]);
 
-  useEffect(()=>{ loadAddresses(); },[]);
+  useEffect(() => {
+    loadAddresses();
+  }, [loadAddresses]);
 
   const validate = () => {
     if (!form.fullName.trim()) return "Full name required";
@@ -58,7 +63,10 @@ const AddressesPage = () => {
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/addresses/${addressId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ isDefault: true }) });
       const data = await res.json();
       if (res.ok) { setAddresses(data.data || []); }
-    } catch {}
+    } catch (error) {
+      console.error("Error setting default address:", error);
+      setMessage("Failed to set default address");
+    }
   };
 
   const onEdit = (addr) => {
@@ -72,7 +80,10 @@ const AddressesPage = () => {
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/addresses/${addressId}`, { method: 'DELETE' });
       const data = await res.json();
       if (res.ok) setAddresses(data.data || []);
-    } catch {}
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      setMessage("Failed to delete address");
+    }
   };
 
   const autofillPin = async () => {
@@ -86,7 +97,10 @@ const AddressesPage = () => {
       } else {
         setMessage('PIN not found');
       }
-    } catch {}
+    } catch (error) {
+      console.error("Error auto-filling PIN:", error);
+      setMessage("Failed to auto-fill address details");
+    }
   };
 
   return (

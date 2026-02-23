@@ -31,7 +31,9 @@ const AddressPage = () => {
             country: data.data.country || "India",
           });
         }
-      } catch {}
+      } catch (error) {
+        console.error("Error loading address:", error);
+      }
     };
     load();
   }, []);

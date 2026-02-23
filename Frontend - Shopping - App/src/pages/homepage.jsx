@@ -66,18 +66,6 @@ const HomePage = () => {
     }
   };
 
-  // Function to get diverse products by filtering different categories
-  const getProductsByCategory = (allProducts, categoryKeywords) => {
-    return allProducts.filter(product => {
-      const title = product.title?.toLowerCase() || '';
-      const category = product.category?.toLowerCase() || '';
-      return categoryKeywords.some(keyword => 
-        title.includes(keyword.toLowerCase()) || 
-        category.includes(keyword.toLowerCase())
-      );
-    });
-  };
-
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);

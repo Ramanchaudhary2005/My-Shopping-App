@@ -107,7 +107,7 @@ const RecentlyViewedPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {recentlyViewed.map((item, index) => {
+            {recentlyViewed.map((item) => {
               const discountedPrice = (item.price * (1 - item.discountPercentage / 100) * 88).toFixed(0);
               const originalPrice = (item.price * 88).toFixed(0);
               

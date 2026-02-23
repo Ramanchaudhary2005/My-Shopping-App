@@ -23,14 +23,14 @@ const validateOtpMiddleware = async (req, res, next) => {
             });
         }
 
-        // Optionally: check expiry (if you want to be extra sure)
-        // if (latestOtpDoc.createdAt.getTime() + 5 * 60 * 1000 < Date.now()) {
-        //     return res.status(400).json({
-        //         isSuccess: false,
-        //         message: "OTP expired",
-        //         data: {},
-        //     });
-        // }
+        // Extra safety: reject OTPs older than 5 minutes even before TTL cleanup runs
+        if (latestOtpDoc.createdAt.getTime() + 5 * 60 * 1000 < Date.now()) {
+            return res.status(400).json({
+                isSuccess: false,
+                message: "OTP expired",
+                data: {},
+            });
+        }
 
         next(); // OTP is valid, proceed to the next middleware or route handler
     } catch (err) {

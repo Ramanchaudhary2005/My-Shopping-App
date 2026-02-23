@@ -19,7 +19,7 @@ const userSignupController = async (req, res) => {
     }
 
     // 2. Check OTP match
-    if (existingOtp.otp !== otp) {
+    if (String(existingOtp.otp) !== String(otp)) {
       return res.status(400).json({
         isSuccess: false,
         message: "Invalid OTP",
@@ -28,7 +28,8 @@ const userSignupController = async (req, res) => {
     }
 
     // 3. Check OTP expiry
-    if (existingOtp.expiresAt < new Date()) {
+    const otpExpiresAt = new Date(new Date(existingOtp.createdAt).getTime() + 5 * 60 * 1000);
+    if (otpExpiresAt < new Date()) {
       return res.status(400).json({
         isSuccess: false,
         message: "OTP expired. Please request a new one.",

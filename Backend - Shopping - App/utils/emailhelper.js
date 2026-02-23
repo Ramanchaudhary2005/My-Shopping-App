@@ -1,33 +1,43 @@
 const nodemailer = require("nodemailer");
 
+const smtpUser = process.env.SMPT_USER;
+const smtpPassword = process.env.SMPT_PASSWORD;
+const hasSmtpCredentials = Boolean(smtpUser && smtpPassword);
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 587, // use TLS
+  port: 587,
   secure: false,
   auth: {
-    user: process.env.SMPT_USER,
-    pass: process.env.SMPT_PASSWORD,
+    user: smtpUser,
+    pass: smtpPassword,
   },
 });
 
-// verify transporter once
-(async () => {
-  try {
-    await transporter.verify();
-    console.log("Ready to send emails");
-  } catch (err) {
-    console.error("Error in email verification:", err);
-  }
-})();
+if (hasSmtpCredentials) {
+  (async () => {
+    try {
+      await transporter.verify();
+      console.log("Ready to send emails");
+    } catch (err) {
+      console.error("Error in email verification:", err.message);
+    }
+  })();
+} else {
+  console.warn("SMTP credentials are missing. Email sending is disabled.");
+}
 
-// function to send email
-const sendEmail = async (toEmail, subject, htmltext) => {
+const sendEmail = async (toEmail, subject, htmlText) => {
+  if (!hasSmtpCredentials) {
+    throw new Error("Email sending failed: SMTP credentials are not configured");
+  }
+
   try {
     const info = await transporter.sendMail({
-      from: `"My-Shopping-App-Verification" <${process.env.SMPT_USER}>`,
+      from: `"My-Shopping-App-Verification" <${smtpUser}>`,
       to: toEmail,
       subject,
-      html: htmltext,
+      html: htmlText,
     });
 
     console.log("Message sent:", info.messageId);
@@ -38,26 +48,25 @@ const sendEmail = async (toEmail, subject, htmltext) => {
   }
 };
 
-// function to send OTP email
 const sendOtpEmail = async (toEmail, otp) => {
   const subject = "OTP for My Shopping App";
-  const htmltext = `<h1>Your OTP is ${otp}</h1>`;
-
-  try {
-    await sendEmail(toEmail, subject, htmltext);
-  } catch (err) {
-    console.error("Error in sending OTP email:", err.message);
-  }
+  const htmlText = `<h1>Your OTP is ${otp}</h1>`;
+  await sendEmail(toEmail, subject, htmlText);
 };
 
 const buildOrderSuccessEmailHtml = (order) => {
-  const itemsHtml = (order.items || []).map(it => `
+  const itemsHtml = (order.items || [])
+    .map(
+      (item) => `
     <tr>
-      <td style="padding:6px 8px;border-bottom:1px solid #eee;">${it.name || it.title || 'Item'}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #eee;">${it.quantity || 1}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #eee;">₹${((it.price || 0) * 88).toFixed(0)}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;">${item.name || item.title || "Item"}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;">${item.quantity || 1}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;">&#8377;${((item.price || 0) * 88).toFixed(0)}</td>
     </tr>
-  `).join("");
+  `
+    )
+    .join("");
+
   return `
     <div style="font-family:Arial,Helvetica,sans-serif;padding:16px;color:#111;">
       <h2>Order Placed Successfully</h2>
@@ -75,7 +84,7 @@ const buildOrderSuccessEmailHtml = (order) => {
           ${itemsHtml}
         </tbody>
       </table>
-      <p style="margin-top:12px;"><strong>Total:</strong> ₹${(Number(order.totalAmount || 0) * 88).toFixed(0)}</p>
+      <p style="margin-top:12px;"><strong>Total:</strong> &#8377;${(Number(order.totalAmount || 0) * 88).toFixed(0)}</p>
       <p>Status: ${order.status}</p>
     </div>
   `;

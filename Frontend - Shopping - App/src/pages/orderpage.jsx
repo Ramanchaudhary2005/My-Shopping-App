@@ -1,5 +1,5 @@
 import { Navbar } from "../components/navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CheckCircle, Truck, CreditCard, MapPin, User, ArrowLeft } from "lucide-react";
 
@@ -28,7 +28,7 @@ const OrderPage = () => {
   const userId = localStorage.getItem('userId') || '68a2d87c1292385b9c8c30ce'; // Fallback to your test user
 
   // Fetch cart items
-  const fetchCartItems = async () => {
+  const fetchCartItems = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await fetch('http://localhost:3900/api/v1/cart', {
@@ -53,7 +53,7 @@ const OrderPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
     fetchCartItems();
@@ -66,10 +66,12 @@ const OrderPage = () => {
         if (res.ok && data?.data && (data.data.street || data.data.city || data.data.state || data.data.zipCode)) {
           setHasSavedAddress(true);
         }
-      } catch {}
+      } catch (error) {
+        console.error('Error loading saved address flag:', error);
+      }
     };
     loadSavedFlag();
-  }, []);
+  }, [fetchCartItems]);
 
   // Calculate totals
   const subtotal = cartItems.reduce((total, item) => {
@@ -286,7 +288,9 @@ const OrderPage = () => {
                                 country: data.data.country || 'India',
                               });
                             }
-                          } catch {}
+                          } catch (error) {
+                            console.error('Error loading saved shipping address:', error);
+                          }
                         }
                       }}
                     />
