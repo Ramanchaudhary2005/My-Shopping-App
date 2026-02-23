@@ -23,6 +23,9 @@ app.use((req,res,next)=>{
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.get("/", (req, res) => {
+    res.status(200).json({ ok: true, message: "Backend is running" });
+});
 app.use("/api/v1", apiRouter);
 app.use(cookieParser());
 
