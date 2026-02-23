@@ -32,7 +32,13 @@ const SignupPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setMessage("✅ OTP sent successfully! Check your email.");
+        const fallbackOtp = data?.data?.otp;
+        if (fallbackOtp) {
+          setOtp(String(fallbackOtp));
+          setMessage(`✅ OTP generated. Email failed, use this OTP: ${fallbackOtp}`);
+        } else {
+          setMessage("✅ OTP sent successfully! Check your email.");
+        }
         setStep(2);
       } else {
         setMessage(`❌ Failed to send OTP: ${data.message || "Unknown error"}`);
