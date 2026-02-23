@@ -25,7 +25,7 @@ const OrderPage = () => {
   const [hasSavedAddress, setHasSavedAddress] = useState(false);
 
   // Get userId from localStorage or your auth context
-  const userId = localStorage.getItem('userId') || '68a2d87c1292385b9c8c30ce'; // Fallback to your test user
+  const userId = localStorage.getItem('userId') || 'guest';
 
   // Fetch cart items
   const fetchCartItems = useCallback(async () => {
@@ -59,8 +59,7 @@ const OrderPage = () => {
     fetchCartItems();
     const loadSavedFlag = async () => {
       try {
-        const uid = localStorage.getItem('userId');
-        if (!uid) return;
+        const uid = localStorage.getItem('userId') || 'guest';
         const res = await fetch(`http://localhost:3900/api/v1/users/${uid}/address`);
         const data = await res.json();
         if (res.ok && data?.data && (data.data.street || data.data.city || data.data.state || data.data.zipCode)) {
@@ -275,8 +274,7 @@ const OrderPage = () => {
                         setUseSavedAddress(checked);
                         if (checked) {
                           try {
-                            const uid = localStorage.getItem('userId');
-                            if (!uid) return;
+                            const uid = localStorage.getItem('userId') || 'guest';
                             const res = await fetch(`http://localhost:3900/api/v1/users/${uid}/address`);
                             const data = await res.json();
                             if (res.ok && data?.data) {

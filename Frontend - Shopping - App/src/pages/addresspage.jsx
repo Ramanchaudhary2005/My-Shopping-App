@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navbar } from "../components/navbar";
 
 const AddressPage = () => {
+  const userId = typeof window !== "undefined" ? (localStorage.getItem("userId") || "guest") : "guest";
   const [address, setAddress] = useState({
     fullName: "",
     phone: "",
@@ -16,8 +17,6 @@ const AddressPage = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const userId = localStorage.getItem('userId');
-        if (!userId) return;
         const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/address`);
         const data = await res.json();
         if (res.ok && data?.data) {
@@ -36,7 +35,7 @@ const AddressPage = () => {
       }
     };
     load();
-  }, []);
+  }, [userId]);
 
   const handleChange = (field, value) => {
     setAddress((prev) => ({ ...prev, [field]: value }));
@@ -45,11 +44,6 @@ const AddressPage = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        setMessage("User not found. Please login again.");
-        return;
-      }
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/address`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

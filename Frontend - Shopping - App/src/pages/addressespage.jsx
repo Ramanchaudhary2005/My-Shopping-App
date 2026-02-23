@@ -8,11 +8,10 @@ const AddressesPage = () => {
   const [form, setForm] = useState(emptyAddr);
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
-  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
+  const userId = typeof window !== 'undefined' ? (localStorage.getItem('userId') || 'guest') : 'guest';
 
   const loadAddresses = useCallback(async () => {
     try {
-      if (!userId) return;
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/addresses`);
       const data = await res.json();
       if (res.ok) setAddresses(data.data || []);
@@ -41,7 +40,6 @@ const AddressesPage = () => {
     const err = validate();
     if (err) { setMessage(err); return; }
     try {
-      if (!userId) return setMessage("User not found. Please login again.");
       const url = editingId ? `http://localhost:3900/api/v1/users/${userId}/addresses/${editingId}` : `http://localhost:3900/api/v1/users/${userId}/addresses`;
       const method = editingId ? 'PUT' : 'POST';
       const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
@@ -59,7 +57,6 @@ const AddressesPage = () => {
 
   const setDefault = async (addressId) => {
     try {
-      if (!userId) return;
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/addresses/${addressId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ isDefault: true }) });
       const data = await res.json();
       if (res.ok) { setAddresses(data.data || []); }
@@ -76,7 +73,6 @@ const AddressesPage = () => {
 
   const onDelete = async (addressId) => {
     try {
-      if (!userId) return;
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/addresses/${addressId}`, { method: 'DELETE' });
       const data = await res.json();
       if (res.ok) setAddresses(data.data || []);

@@ -17,11 +17,10 @@ const ProfilePage = () => {
   const [message, setMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
-  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
+  const userId = typeof window !== 'undefined' ? (localStorage.getItem('userId') || 'guest') : 'guest';
 
   const loadProfile = useCallback(async () => {
     try {
-      if (!userId) return;
       const res = await fetch(`http://localhost:3900/api/v1/users/${userId}/profile`);
       const data = await res.json();
       if (res.ok && data?.data) {
@@ -51,7 +50,6 @@ const ProfilePage = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      if (!userId) return setMessage("User not found. Please login again.");
       if (form.phone && !/^\d{10}$/.test(form.phone)) {
         return setMessage("Enter valid 10-digit phone number.");
       }

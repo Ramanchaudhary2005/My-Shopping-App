@@ -1,6 +1,6 @@
 const { orderModel } = require("../../../models/orderSchema.js");
 const { cartModel } = require("../../../models/cartSchema.js");
-const { UserModel } = require("../../../models/userSchema.js");
+const { resolveUserByIdOrGuest } = require("../../../utils/guestUser.js");
 const { sendOrderSuccessEmail } = require("../../../utils/emailhelper.js");
 
 const createOrder = async (req, res) => {
@@ -12,12 +12,14 @@ const createOrder = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!userId || !shippingAddress || !paymentMethod) {
+    if (!shippingAddress || !paymentMethod) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: userId, shippingAddress, or paymentMethod"
+        message: "Missing required fields: shippingAddress or paymentMethod"
       });
     }
+
+    const resolvedUser = await resolveUserByIdOrGuest(userId);
 
     // Get cart items
     const cart = await cartModel.findOne();
@@ -45,7 +47,7 @@ const createOrder = async (req, res) => {
 
     // Create order
     const order = await orderModel.create({
-      userId,
+      userId: resolvedUser._id,
       orderNumber,
       items: cart.items,
       totalAmount: totalAmount.toFixed(2),
@@ -59,9 +61,8 @@ const createOrder = async (req, res) => {
 
     // Send order confirmation email (best-effort)
     try {
-      const user = await UserModel.findById(userId).select('email');
-      if (user && user.email) {
-        await sendOrderSuccessEmail(user.email, {
+      if (resolvedUser && resolvedUser.email) {
+        await sendOrderSuccessEmail(resolvedUser.email, {
           orderId: order._id,
           orderNumber: order.orderNumber,
           totalAmount: order.totalAmount,
@@ -100,16 +101,10 @@ const createOrder = async (req, res) => {
 const getUserOrders = async (req, res) => {
   try {
     const { userId } = req.params;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "User ID is required"
-      });
-    }
+    const resolvedUser = await resolveUserByIdOrGuest(userId);
 
     const orders = await orderModel
-      .find({ userId })
+      .find({ userId: resolvedUser._id })
       .sort({ createdAt: -1 }); // Latest orders first
 
     res.status(200).json({

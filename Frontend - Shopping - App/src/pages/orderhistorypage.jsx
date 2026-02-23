@@ -9,13 +9,7 @@ const OrderHistoryPage = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        setOrders([]);
-        setError("User not found. Please login again.");
-        setLoading(false);
-        return;
-      }
+      const userId = localStorage.getItem('userId') || 'guest';
       const response = await fetch(`http://localhost:3900/api/v1/orders/user/${userId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
