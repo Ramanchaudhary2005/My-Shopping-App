@@ -15,7 +15,12 @@ const sendOtpController = async (req, res) => {
         // generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000);
 
-        await sendOtpEmail(email, otp); // <-- this function should be defined to send the OTP via email
+        await Promise.race([
+            sendOtpEmail(email, otp),
+            new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Email service timeout")), 20000)
+            ),
+        ]);
 
         // save in DB
         await OtpModel.create({ email, otp });

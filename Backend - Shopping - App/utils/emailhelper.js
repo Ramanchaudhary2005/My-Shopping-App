@@ -4,13 +4,18 @@ const smtpUser = process.env.SMTP_USER || process.env.SMPT_USER;
 const smtpPassword = process.env.SMTP_PASSWORD || process.env.SMPT_PASSWORD;
 const hasSmtpCredentials = Boolean(smtpUser && smtpPassword);
 const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
-const smtpPort = Number(process.env.SMTP_PORT || 587);
-const smtpSecure = process.env.SMTP_SECURE === "true";
+const smtpPort = Number(process.env.SMTP_PORT || 465);
+const smtpSecure = process.env.SMTP_SECURE
+  ? process.env.SMTP_SECURE === "true"
+  : smtpPort === 465;
 
 const transportConfig = {
   host: smtpHost,
   port: smtpPort,
   secure: smtpSecure,
+  connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT || 10000),
+  greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT || 10000),
+  socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT || 15000),
 };
 
 if (hasSmtpCredentials) {
