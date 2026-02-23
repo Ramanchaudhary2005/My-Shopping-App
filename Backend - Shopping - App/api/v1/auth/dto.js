@@ -1,5 +1,3 @@
-const { use } = require("react");
-
 const userSignupValidator = (req, res, next)=>{
     try{
         const {email, password, otp} = req.body;
