@@ -29,10 +29,11 @@ const sendOtpController = async (req, res) => {
         });
     } catch (err) {
         console.error("Error in sendOtpController:", err);
+        const failureReason = err?.message || "Failed to send OTP email";
         return res.status(500).json({
             isSuccess: false,
-            message: "Failed to send OTP email",
-            data: process.env.NODE_ENV === "development" ? { error: err.message } : {},
+            message: failureReason,
+            data: {},
         });
     }
 };
