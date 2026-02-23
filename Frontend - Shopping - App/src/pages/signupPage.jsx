@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navbar } from "../components/navbar";
-import { useNavigate } from "react-router-dom"; 
-import { HashLoader } from "react-spinners"; 
+import { useNavigate } from "react-router-dom";
+import { HashLoader } from "react-spinners";
 import "./signup.css";
 import { loginLocal } from "../utils/auth";
 
@@ -12,11 +12,10 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
-  const [userExists, setUserExists] = useState(false); // ✅ track if user exists
+  const [userExists, setUserExists] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Step 1: Send OTP
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -32,23 +31,16 @@ const SignupPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        const fallbackOtp = data?.data?.otp;
-        if (fallbackOtp) {
-          setOtp(String(fallbackOtp));
-          setMessage(`✅ OTP generated. Email failed, use this OTP: ${fallbackOtp}`);
-        } else {
-          setMessage("✅ OTP sent successfully! Check your email.");
-        }
+        setMessage("OTP sent successfully. Check your email.");
         setStep(2);
       } else {
-        setMessage(`❌ Failed to send OTP: ${data.message || "Unknown error"}`);
+        setMessage(`Failed to send OTP: ${data.message || "Unknown error"}`);
       }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
   };
 
-  // ✅ Step 2: Signup
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -64,39 +56,34 @@ const SignupPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setMessage("🎉 Signup successful! Auto-login and redirecting...");
+        setMessage("Signup successful. Auto-login and redirecting...");
         setSignupSuccess(true);
-        
-        // Auto-login with JWT token
+
         try {
           const token = data?.data?.token;
           const userData = data?.data?.user;
-          
+
           if (token) {
             loginLocal(token, userData);
-            // Redirect to home page after successful signup and auto-login
             setTimeout(() => {
               navigate("/");
             }, 1500);
           }
         } catch (error) {
-          console.error('Error during auto-login:', error);
-          setMessage("🎉 Signup successful! Please login.");
+          console.error("Error during auto-login:", error);
+          setMessage("Signup successful. Please login.");
         }
+      } else if (data.message && data.message.includes("already exists")) {
+        setMessage("Signup failed: User already exists with this email.");
+        setUserExists(true);
       } else {
-        if (data.message && data.message.includes("already exists")) {
-          setMessage("❌ Signup failed: User already exists with this email.");
-          setUserExists(true); // ✅ show login option
-        } else {
-          setMessage(`❌ Signup failed: ${data.message || "Unknown error"}`);
-        }
+        setMessage(`Signup failed: ${data.message || "Unknown error"}`);
       }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
   };
 
-  // ✅ Handle redirect with loader
   const handleGoToLogin = () => {
     setLoading(true);
     setTimeout(() => {
@@ -112,7 +99,6 @@ const SignupPage = () => {
         <div className="signup-card">
           <h2 className="signup-title">Signup</h2>
 
-          {/* Step 1: Enter Email */}
           {step === 1 && (
             <form className="signup-form" onSubmit={handleEmailSubmit}>
               <input
@@ -127,7 +113,6 @@ const SignupPage = () => {
             </form>
           )}
 
-          {/* Step 2: Enter OTP + Password */}
           {step === 2 && (
             <form className="signup-form" onSubmit={handleSignupSubmit}>
               <input
@@ -148,12 +133,11 @@ const SignupPage = () => {
               />
               <button type="submit">Complete Signup</button>
               <p className="otp-message">
-                📩 OTP has been sent to <strong>{email}</strong>. Please check your inbox.
+                OTP has been sent to <strong>{email}</strong>. Please check your inbox.
               </p>
             </form>
           )}
 
-          {/* ✅ Common message section */}
           {message && (
             <p style={{ marginTop: "15px" }}>
               {message}{" "}
@@ -174,7 +158,6 @@ const SignupPage = () => {
             </p>
           )}
 
-          {/* ✅ Loader */}
           {loading && (
             <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
               <HashLoader color="#4F46E5" size={50} />
