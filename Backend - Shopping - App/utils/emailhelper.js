@@ -1,18 +1,26 @@
 const nodemailer = require("nodemailer");
 
-const smtpUser = process.env.SMPT_USER;
-const smtpPassword = process.env.SMPT_PASSWORD;
+const smtpUser = process.env.SMTP_USER || process.env.SMPT_USER;
+const smtpPassword = process.env.SMTP_PASSWORD || process.env.SMPT_PASSWORD;
 const hasSmtpCredentials = Boolean(smtpUser && smtpPassword);
+const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
+const smtpPort = Number(process.env.SMTP_PORT || 587);
+const smtpSecure = process.env.SMTP_SECURE === "true";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
+const transportConfig = {
+  host: smtpHost,
+  port: smtpPort,
+  secure: smtpSecure,
+};
+
+if (hasSmtpCredentials) {
+  transportConfig.auth = {
     user: smtpUser,
     pass: smtpPassword,
-  },
-});
+  };
+}
+
+const transporter = nodemailer.createTransport(transportConfig);
 
 if (hasSmtpCredentials) {
   (async () => {
@@ -24,7 +32,7 @@ if (hasSmtpCredentials) {
     }
   })();
 } else {
-  console.warn("SMTP credentials are missing. Email sending is disabled.");
+  console.warn("SMTP credentials are missing. Set SMTP_USER/SMTP_PASSWORD (or SMPT_USER/SMPT_PASSWORD).");
 }
 
 const sendEmail = async (toEmail, subject, htmlText) => {
@@ -44,7 +52,7 @@ const sendEmail = async (toEmail, subject, htmlText) => {
     console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
   } catch (err) {
     console.error("Error in sending email:", err.message);
-    throw new Error("Email sending failed");
+    throw new Error(`Email sending failed: ${err.message}`);
   }
 };
 

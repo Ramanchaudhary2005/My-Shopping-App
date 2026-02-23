@@ -4,6 +4,13 @@ const { sendOtpEmail } = require("../../../utils/emailhelper");
 const sendOtpController = async (req, res) => {
     try {
         const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                isSuccess: false,
+                message: "Email is required",
+                data: {},
+            });
+        }
 
         // generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000);
@@ -24,8 +31,8 @@ const sendOtpController = async (req, res) => {
         console.error("Error in sendOtpController:", err);
         return res.status(500).json({
             isSuccess: false,
-            message: "Internal Server Error",
-            data: {},
+            message: "Failed to send OTP email",
+            data: process.env.NODE_ENV === "development" ? { error: err.message } : {},
         });
     }
 };
